@@ -1,5 +1,5 @@
 ## Read restcountries data
-restcountries_data <- readRDS('data/get_restcountries_data.rds')
+restcountries_data <- load('data/get_restcountries_data.rda')
 
 # Define the columns to select
 select_countries_columns <- c(

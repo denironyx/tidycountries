@@ -118,3 +118,6 @@ df_processed <- process_country_data(parsed_data)
 
 
 saveRDS(df_processed, 'data/get_restcountries_data.rds')
+
+save(df_processed, file='data/get_restcountries_data.rda')
+
