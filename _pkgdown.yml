@@ -1,0 +1,6 @@
+url: https://denironyx.github.io/tidycountries/
+template:
+  bootstrap: 5
+  bootswatch: solar
+  theme: arrow-dark
+

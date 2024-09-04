@@ -4,3 +4,8 @@
 ^\.Rproj\.user$
 ^data-raw$
 ^LICENSE\.md$
+^vignettes/articles$
+^cran-comments\.md$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
