@@ -1,3 +1,8 @@
+# core.R
+
+# Source the utils.R script to load necessary data and functions
+source("R/zzz.R")
+
 ## Function to fetch all country information from restcountries .rds
 fetch_restcountries_data <- function(){
   restcountries_data
@@ -31,7 +36,7 @@ fetch_restcountries_data <- function(){
 #' usa_info <- get_country_info("US")
 #' print(usa_info)
 #' }
-#'@importFrom dplyr %>% filter collect all_of distinct
+#'@importFrom dplyr %>% filter collect all_of distinct pull select
 #'@importFrom stringr str_to_lower
 #'
 get_country_info <- function(country_value){
@@ -138,7 +143,7 @@ get_countries_by_region <- function(country_region_value) {
 #' The function is case-insensitive and matches the currency name or part of the name.
 #' The output is ordered alphabetically by country name.
 #'
-#' @param input A character string representing the currency name or part of the name. The input is case-insensitive.
+#' @param currency_input A character string representing the currency name or part of the name. The input is case-insensitive.
 #'
 #' @return A data frame containing the list of countries that use the specified currency, ordered alphabetically by country name.
 #'         The columns include country codes (CCA2 and CCA3), common name, capital, continents, currency name, currency symbol, latitude, and longitude.
@@ -162,12 +167,12 @@ get_countries_by_region <- function(country_region_value) {
 #' yen_countries <- get_countries_by_currency("Yen")
 #' print(yen_countries)
 #' }
-#'@importFrom dplyr %>% filter collect all_of distinct
+#'@importFrom dplyr %>% filter collect all_of distinct select arrange
 #'@importFrom stringr str_to_lower regex str_detect
 #'
-get_countries_by_currency <- function(input) {
+get_countries_by_currency <- function(currency_input) {
   # Convert the input currency name to lowercase
-  currency_name_lower <- str_to_lower(input)
+  currency_name_lower <- str_to_lower(currency_input)
 
   restcountries_data %>%
     filter(
@@ -180,6 +185,7 @@ get_countries_by_currency <- function(input) {
       common_name,
       capital,
       continents,
+      currencies,
       currency_name,
       currency_symbol,
       lat,

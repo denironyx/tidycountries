@@ -114,10 +114,15 @@ parsed_data <- jsonlite::fromJSON('data-raw/countriesV3.1.json', flatten = TRUE)
 
 
 # Use the function to process your dataframe
-df_processed <- process_country_data(parsed_data)
+restcountries_tidy_data <- process_country_data(parsed_data)
 
 
-saveRDS(df_processed, 'data/get_restcountries_data.rds')
+# Specify the path to the /data directory
+save(restcountries_tidy_data, file = "data/restcountries_tidy_data.rda")
 
-save(df_processed, file='data/get_restcountries_data.rda')
+#
+#
+# saveRDS(df_processed, 'data/get_restcountries_data.rds')
+#
+# save(df_processed, file='data/get_restcountries_data.rda')
 

@@ -4,10 +4,10 @@
 \alias{get_countries_by_currency}
 \title{get_countries_by_currency}
 \usage{
-get_countries_by_currency(input)
+get_countries_by_currency(currency_input)
 }
 \arguments{
-\item{input}{A character string representing the currency name or part of the name. The input is case-insensitive.}
+\item{currency_input}{A character string representing the currency name or part of the name. The input is case-insensitive.}
 }
 \value{
 A data frame containing the list of countries that use the specified currency, ordered alphabetically by country name.
