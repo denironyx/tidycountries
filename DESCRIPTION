@@ -4,8 +4,14 @@ Title: Access and Manipulate Comprehensive Country Level Data in Tidy Format
 Version: 0.0.1
 Authors@R: 
     person("Dennis", "Irorere", , "denironyx@gmail.com", role = c("aut", "cre", "cph"))
-Description: The tidycountries package provides a comprehensive and user-friendly interface for accessing, manipulating, and analyzing country-level data from around the world. It allows users to retrieve detailed information on countries, including names, regions, subregions, continents, populations, currencies, calling codes, and more, all in a tidy data format. The package is designed to work seamlessly within the tidyverse ecosystem, making it easy to filter, arrange, and visualize country-level data in R.
+Description: A comprehensive and user-friendly interface for accessing, manipulating, 
+    and analyzing country-level data from around the world. It allows users to retrieve detailed 
+    information on countries, including names, regions, continents, populations, currencies, calling codes, 
+    and more, all in a tidy data format. The package is designed to work seamlessly within 
+    the 'tidyverse' ecosystem, making it easy to filter, arrange, and visualize country-level data in R.
 License: MIT + file LICENSE
+URL: https://github.com/denironyx/tidycountries
+BugReports: https://github.com/denironyx/tidycountries/issues
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
@@ -19,5 +25,3 @@ Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Config/Needs/website: rmarkdown
-URL: https://github.com/denironyx/tidycountries
-BugReports: https://github.com/denironyx/tidycountries/issues

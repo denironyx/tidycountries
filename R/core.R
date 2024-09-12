@@ -36,7 +36,7 @@ fetch_restcountries_data <- function(){
 #' usa_info <- get_country_info("US")
 #' print(usa_info)
 #' }
-#'@importFrom dplyr %>% filter collect all_of distinct pull select
+#'@importFrom dplyr %>% filter collect all_of distinct select
 #'@importFrom stringr str_to_lower
 #'
 get_country_info <- function(country_value){
@@ -60,13 +60,8 @@ get_country_info <- function(country_value){
     # check if result is empty and provide warning message
     if(nrow(result) == 0)
     {
-      cat("Sorry, no data found for the provide input. \n")
-      cat("Here is a list of all available country names: \n")
-      all_country_names <- restcountries_data %>%
-        pull(common_name) %>%
-        unique() %>%
-        sort()
-      print(all_country_names)
+      warning("Sorry, no data found for the provide input. \n")
+      warning("Here is a link to all available countries <https://en.wikipedia.org/wiki/List_of_sovereign_states>")
     } else {
       return(result)
     }
@@ -126,10 +121,9 @@ get_countries_by_region <- function(country_region_value) {
     warning("Sorry, no data found for the provided input.")
     message("Here is a list of all available regions, subregions, and continents:")
     all_region_info <- restcountries_data %>%
-      select(region, subregion, continents) %>%
-      distinct() %>%
-      arrange(region, subregion, continents)
-    print(all_region_info)
+      select(continents) %>%
+      distinct()
+    message(all_region_info)
   } else {
     return(result)
   }
