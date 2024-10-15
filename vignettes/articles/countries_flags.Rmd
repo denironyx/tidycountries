@@ -1,0 +1,68 @@
+---
+title: "Country Flags"
+output:
+  html_document:
+    df_print: paged
+    theme: cerulean
+    bootstrap: 5
+    bootswatch: cerulean
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Country Flags in Data 
+In a world that is increasingly interconnected, visual communication plays a critical role in conveying information effectively. One powerful tool in this arsenal is the use of flags in data visualization, particularly when presenting country-level data. Flags serve not just as symbols of national identity but also enhance the clarity and appeal of data presentations. Here’s why incorporating flags into your data analysis, such as with the `tidycountries` package, is so impactful.
+
+### A story using Flags
+Imagine you are tasked with preparing a report on the top 10 most populated countries and their demographic characteristics. Using `tidycountries`, you can not only gather essential data but also embed flags to enhance your presentation.
+
+```{r setup}
+# Load required libraries
+library(tidycountries)
+library(dplyr)
+library(DT)
+library(htmltools)
+library(scales)
+
+# Fetch countries information using tidycountries
+all_countries <- get_country_info("all")
+
+# Filter the top 5 countries by population
+top_10_countries <- all_countries %>% 
+  select(common_name, official_name, region, population, flags_svg) %>% 
+  distinct(common_name, .keep_all = TRUE) %>%  # Ensure unique entries
+  arrange(desc(population)) %>% 
+  head(n = 10)
+
+# Function to embed flag images
+flag_image <- function(url) {
+  as.character(tags$img(src = url, width = 50, height = 30))  # Convert to a character string
+}
+
+# Format the population values with commas
+top_10_countries$population <- comma(top_10_countries$population)
+
+# Apply the flag_image function to the flags_svg column
+top_10_countries$Flag <- lapply(top_10_countries$flags_svg, flag_image)
+
+# Create the interactive table using DT
+datatable(
+  top_10_countries[, c("Flag", "common_name", "official_name", "population")],
+  escape = FALSE,  # Allows HTML rendering
+  options = list(
+    pageLength = 10,   # Number of rows per page
+    columnDefs = list(list(className = 'dt-center', targets = "_all")) # Center align
+  ),
+  colnames = c("Flag", "Common Name", "Official Name", "Population")
+)
+```
+
+### A Flag-Focused Presentation
+
+By executing the above code, you create a visually appealing table that showcases the top ten most populated countries. Each country is accompanied by its flag, providing instant recognition and enhancing the overall clarity of your presentation.
+
