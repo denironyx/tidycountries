@@ -24,3 +24,6 @@ Once installed, you need to load the package to use its function
 library(tidyverse)
 library(tidycountries)
 ```
+
+Articles about `tidycountries`: 
+- [Country Flags in Data](https://denironyx.github.io/tidycountries/articles/countries_flags.html)
