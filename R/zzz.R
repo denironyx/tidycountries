@@ -19,3 +19,7 @@ select_countries_columns <- c(
   "landlocked", "timezones", "start_of_week", "car_side",
   "currencies", "population", "area", "root", "lat", "lon"
 )
+
+
+# Load the world administrative boundaries data when the package is loaded
+load("data/world_administrative_boundaries.rda")

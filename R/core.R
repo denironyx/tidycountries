@@ -8,7 +8,6 @@ fetch_restcountries_data <- function(){
   restcountries_data
 }
 
-
 #' get_country_info
 #'
 #' This function retrieves information about a specific country based on its country code (cca2 or cca3) or common name.
@@ -17,12 +16,14 @@ fetch_restcountries_data <- function(){
 #' the function returns a list of all available country names.
 #' @param country_value A character string representing the country code(cca2 or cca3) or common name. The input is case-insensitive.
 #'                      If "all" is passed, the function return data for all countries.
+#' @param geometry Logical. If `TRUE`, includes spatial geometry data for the country (boundaries).
+#'                 Defaults to `FALSE`. When `TRUE`, an additional column for geographic boundaries  is included.
 #'
-#' @return A data frame with selected country information. If the input is "all", it returns data for all countries.
-#'        if no match is found, a list of all available country names is printed.
+#' @return A data frame with selected country information. If `geometry = TRUE`, the result includes a geometry column
+#'         with boundary data, making the returned object ready to be converted to an `sf` (simple features) data frame for spatial analysis.
+#'         If the input is "all", it returns data for all countries. If no match is found, a list of all available country names is printed.
 #'
-#' @note A data frame with selected country information. If the input is "all", it returns data for all countries.
-#'       if no match is found, a list of all available country names is printed
+#' @note The returned data frame includes relevant country details. If `geometry = TRUE`, an additional column for geographic boundaries  is included.
 #'
 #' @export
 #'
@@ -36,36 +37,46 @@ fetch_restcountries_data <- function(){
 #' usa_info <- get_country_info("US")
 #' print(usa_info)
 #' }
-#'@importFrom dplyr %>% filter collect all_of distinct select
+#'@importFrom dplyr %>% filter collect all_of distinct select left_join
 #'@importFrom stringr str_to_lower
 #'
-get_country_info <- function(country_value){
-  # converting input to lowercase
+get_country_info <- function(country_value, geometry = FALSE){
+  # Convert input to lowercase
   country_value_lower <- str_to_lower(country_value)
 
-  # if the input is all
-  if(country_value_lower == 'all'){
-    return(restcountries_data) %>%
+  # Filter data for "all" countries or specific country
+  result <- if (country_value_lower == 'all') {
+    restcountries_data %>%
       select(all_of(select_countries_columns))
-  }else{
-    result <- restcountries_data %>%
+  } else {
+    restcountries_data %>%
       filter(
-          str_to_lower(cca2) == country_value_lower |
+        str_to_lower(cca2) == country_value_lower |
           str_to_lower(cca3) ==  country_value_lower |
           str_to_lower(common_name) == country_value_lower
       ) %>%
       select(all_of(select_countries_columns)) %>%
       distinct()
-
-    # check if result is empty and provide warning message
-    if(nrow(result) == 0)
-    {
-      warning("Sorry, no data found for the provide input. \n")
-      warning("Here is a link to all available countries <https://en.wikipedia.org/wiki/List_of_sovereign_states>")
-    } else {
-      return(result)
-    }
   }
+
+  # Check if result is empty and provide a warning message if no data is found
+  if (nrow(result) == 0) {
+    warning("Sorry, no data found for the provide input. \n")
+    warning("Here is a link to all available countries <https://en.wikipedia.org/wiki/List_of_sovereign_states>")
+    return(NULL)
+  }
+
+  # If geometry is TRUE, perform a left join with the world administrative boundaries data
+  if (geometry) {
+    result <- result %>%
+      left_join(world_administrative_boundaries, by = "cca3")
+
+  } else {
+    result
+  }
+
+  return(result)
+
 }
 
 #' get_countries_by_region
@@ -76,11 +87,14 @@ get_country_info <- function(country_value){
 #'
 #' @param country_region_value A character string representing the region, subregion, or continent. The input is case-insensitive.
 #'
-#' @return A data frame containing the list of countries within the specified region, subregion, or continent, ordered alphabetically by country name.
-#'         If no match is found, a warning message is displayed, and a list of all available regions, subregions, and continents is provided.
+#' @param geometry Logical. If `TRUE`, includes spatial geometry data for each country (boundaries).
+#'                 Defaults to `FALSE`. When `TRUE`, an additional column for geographic boundaries is included.
 #'
-#' @note The function utilizes the pre-loaded `restcountries_data` dataset. Ensure that this dataset is loaded before invoking the function.
-#'       The selected columns include country codes, names, capital, region, subregion, start of the week, car side, currencies, population, latitude, and longitude.
+#' @return A data frame with information on countries within the specified region, subregion, or continent.
+#'         If `geometry = TRUE`, the result includes a geometry column with boundary data.
+#'         If no match is found, a message lists all available regions, subregions, and continents.
+#'
+#' @note This function returns relevant information on countries in a specified region. When `geometry = TRUE`, it returns an `sf` object, including spatial data.
 #'
 #' @export
 #'
@@ -90,8 +104,8 @@ get_country_info <- function(country_value){
 #' africa_countries <- get_countries_by_region("Africa")
 #' print(africa_countries)
 #'
-#' # Example usage: Get a list of countries in Western Europe (a subregion)
-#' western_europe_countries <- get_countries_by_region("Western Europe")
+#' # Example usage: Get countries in a specific continent with geometry included
+#' western_europe_countries <- get_countries_by_region("Western Europe", geometry = TRUE)
 #' print(western_europe_countries)
 #'
 #' # Example usage: Get a list of countries in the continent of Asia
@@ -99,10 +113,10 @@ get_country_info <- function(country_value){
 #' print(asia_countries)
 #' }
 #'
-#'@importFrom dplyr %>% filter collect all_of distinct arrange
+#'@importFrom dplyr %>% filter collect all_of distinct arrange left_join
 #'@importFrom stringr str_to_lower
 #'
-get_countries_by_region <- function(country_region_value) {
+get_countries_by_region <- function(country_region_value, geometry = FALSE) {
   country_region_value_lower <- str_to_lower(country_region_value)
 
   # Filter and select columns
@@ -116,6 +130,14 @@ get_countries_by_region <- function(country_region_value) {
     distinct() %>%
     arrange(common_name)  # Order alphabetically by country name
 
+  # Check if geometry is requested and join with spatial data
+  if (geometry) {
+    result <- result %>%
+      left_join(world_administrative_boundaries, by = "cca3")
+  } else {
+    result
+  }
+
   # Check if result is empty and provide appropriate message
   if (nrow(result) == 0) {
     warning("Sorry, no data found for the provided input.")
@@ -124,11 +146,12 @@ get_countries_by_region <- function(country_region_value) {
       select(continents) %>%
       distinct()
     message(all_region_info)
+
   } else {
+
     return(result)
   }
 }
-
 
 
 #' get_countries_by_currency
@@ -139,11 +162,16 @@ get_countries_by_region <- function(country_region_value) {
 #'
 #' @param currency_input A character string representing the currency name or part of the name. The input is case-insensitive.
 #'
+#' @param geometry A logical value indicating whether to include geographic boundary data. Defaults to `FALSE`.
+#'                 If `TRUE`, the function performs a left join with boundary data and returns a spatial `sf` data frame.
+#'
 #' @return A data frame containing the list of countries that use the specified currency, ordered alphabetically by country name.
 #'         The columns include country codes (CCA2 and CCA3), common name, capital, continents, currency name, currency symbol, latitude, and longitude.
+#'         If `geometry = TRUE`, an additional column for geographic boundaries  is included.
 #'
 #' @note The function utilizes the pre-loaded `restcountries_data` dataset. Ensure that this dataset is loaded before invoking the function.
 #'       The function uses a case-insensitive regular expression to match the currency name, allowing partial matches.
+#'       If `geometry = TRUE`, the function joins with the `world_administrative_boundaries` dataset, which must also be pre-loaded.
 #'
 #' @export
 #'
@@ -154,21 +182,22 @@ get_countries_by_region <- function(country_region_value) {
 #' print(euro_countries)
 #'
 #' # Example usage: Find all countries that use a currency with "dollar" in its name
-#' dollar_countries <- get_countries_by_currency("dollar")
+#' dollar_countries <- get_countries_by_currency("dollar", geometry = TRUE)
 #' print(dollar_countries)
 #'
 #' # Example usage: Find all countries that use the Yen
 #' yen_countries <- get_countries_by_currency("Yen")
 #' print(yen_countries)
 #' }
-#'@importFrom dplyr %>% filter collect all_of distinct select arrange
+#'@importFrom dplyr %>% filter collect all_of distinct select arrange left_join
 #'@importFrom stringr str_to_lower regex str_detect
 #'
-get_countries_by_currency <- function(currency_input) {
+get_countries_by_currency <- function(currency_input, geometry = FALSE) {
   # Convert the input currency name to lowercase
   currency_name_lower <- str_to_lower(currency_input)
 
-  restcountries_data %>%
+  # Filter and select relevant columns
+  result <- restcountries_data %>%
     filter(
       # Use case-insensitive regex to match substrings
       str_detect(str_to_lower(currencies), regex(currency_name_lower, ignore_case = TRUE))
@@ -186,7 +215,17 @@ get_countries_by_currency <- function(currency_input) {
       lon
     ) %>%
     distinct() %>%
-    arrange(common_name)
+    arrange(common_name) # Order alphabetically by country name
+
+  # Check if geometry is requested and join with spatial data
+  if (geometry) {
+    result <- result %>%
+      left_join(world_administrative_boundaries, by = "cca3")
+  } else {
+    result
+  }
+
+  return(result)
 }
 
 #' get_country_by_calling_code
@@ -196,12 +235,14 @@ get_countries_by_currency <- function(currency_input) {
 #'
 #' @param call_code A character string representing the calling code, root calling code, or suffix. The input is case-insensitive.
 #'
-#' @return A data frame containing the list of countries that match the provided calling code.
-#'         The columns include country codes (CCA2 and CCA3), common name, official name, capital, region, subregion, continents,
-#'         currencies, calling code details (root, suffixes, and full calling code), and geographic coordinates (latitude and longitude).
+#' @param geometry A logical value indicating whether to include geographic boundary data. Defaults to `FALSE`.
+#'                 If `TRUE`, the function performs a left join with boundary data and returns a spatial `sf` data frame.
 #'
-#' @note The function relies on the pre-loaded `restcountries_data` dataset. Ensure that this dataset is loaded before invoking the function.
-#'       The function searches across the root calling code, suffixes, and full calling code using case-insensitive matching.
+#' @return A data frame containing the information of countries corresponding to the specified calling code, root, or suffixes.
+#'         If `geometry = TRUE`, the result will include an additional column for geographic boundaries (as spatial features).
+#'
+#' @note The function utilizes the pre-loaded `restcountries_data` dataset. Ensure that this dataset is loaded before invoking the function.
+#'       If `geometry = TRUE`, the function joins with the `world_administrative_boundaries` dataset, which must also be pre-loaded.
 #'
 #' @export
 #'
@@ -219,14 +260,14 @@ get_countries_by_currency <- function(currency_input) {
 #' india_info <- get_country_by_calling_code("+91")
 #' print(india_info)
 #' }
-#'@importFrom dplyr %>% filter collect all_of distinct
+#'@importFrom dplyr %>% filter collect all_of distinct left_join
 #'@importFrom stringr str_to_lower
 #'
-get_country_by_calling_code <- function(call_code) {
-
+get_country_by_calling_code <- function(call_code, geometry = FALSE) {
   call_code_lower <- str_to_lower(call_code)
 
-  restcountries_data %>%
+  # Start the base query
+  result <- restcountries_data %>%
     filter(
       str_to_lower(root) == call_code_lower |
         str_to_lower(suffixes) == call_code_lower |
@@ -247,6 +288,21 @@ get_country_by_calling_code <- function(call_code) {
       calling_code,
       lat,
       lon
-    ) %>% distinct()
+    ) %>%
+    distinct()
+
+  # If geometry is TRUE, perform a left join with the world_administrative_boundaries
+  if (geometry) {
+    result <- result %>%
+      left_join(world_administrative_boundaries, by = "cca3")
+  }
+
+  # Check if result is empty and provide a warning message
+  if (nrow(result) == 0) {
+    warning("Sorry, no data found for the provided calling code.")
+    return(NULL)
+  } else {
+    return(result)
+  }
 }
 
