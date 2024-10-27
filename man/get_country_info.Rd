@@ -4,15 +4,19 @@
 \alias{get_country_info}
 \title{get_country_info}
 \usage{
-get_country_info(country_value)
+get_country_info(country_value, geometry = FALSE)
 }
 \arguments{
 \item{country_value}{A character string representing the country code(cca2 or cca3) or common name. The input is case-insensitive.
 If "all" is passed, the function return data for all countries.}
+
+\item{geometry}{Logical. If \code{TRUE}, includes spatial geometry data for the country (boundaries).
+Defaults to \code{FALSE}. When \code{TRUE}, an additional column for geographic boundaries  is included.}
 }
 \value{
-A data frame with selected country information. If the input is "all", it returns data for all countries.
-if no match is found, a list of all available country names is printed.
+A data frame with selected country information. If \code{geometry = TRUE}, the result includes a geometry column
+with boundary data, making the returned object ready to be converted to an \code{sf} (simple features) data frame for spatial analysis.
+If the input is "all", it returns data for all countries. If no match is found, a list of all available country names is printed.
 }
 \description{
 This function retrieves information about a specific country based on its country code (cca2 or cca3) or common name.
@@ -21,8 +25,7 @@ If "all" is passed as the input, it returns data for all countries. If the input
 the function returns a list of all available country names.
 }
 \note{
-A data frame with selected country information. If the input is "all", it returns data for all countries.
-if no match is found, a list of all available country names is printed
+The returned data frame includes relevant country details. If \code{geometry = TRUE}, an additional column for geographic boundaries  is included.
 }
 \examples{
 \donttest{

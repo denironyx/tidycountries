@@ -4,14 +4,18 @@
 \alias{get_countries_by_currency}
 \title{get_countries_by_currency}
 \usage{
-get_countries_by_currency(currency_input)
+get_countries_by_currency(currency_input, geometry = FALSE)
 }
 \arguments{
 \item{currency_input}{A character string representing the currency name or part of the name. The input is case-insensitive.}
+
+\item{geometry}{A logical value indicating whether to include geographic boundary data. Defaults to \code{FALSE}.
+If \code{TRUE}, the function performs a left join with boundary data and returns a spatial \code{sf} data frame.}
 }
 \value{
 A data frame containing the list of countries that use the specified currency, ordered alphabetically by country name.
 The columns include country codes (CCA2 and CCA3), common name, capital, continents, currency name, currency symbol, latitude, and longitude.
+If \code{geometry = TRUE}, an additional column for geographic boundaries  is included.
 }
 \description{
 This function retrieves a list of countries where a specified currency is used.
@@ -21,6 +25,7 @@ The output is ordered alphabetically by country name.
 \note{
 The function utilizes the pre-loaded \code{restcountries_data} dataset. Ensure that this dataset is loaded before invoking the function.
 The function uses a case-insensitive regular expression to match the currency name, allowing partial matches.
+If \code{geometry = TRUE}, the function joins with the \code{world_administrative_boundaries} dataset, which must also be pre-loaded.
 }
 \examples{
 \donttest{
@@ -29,7 +34,7 @@ euro_countries <- get_countries_by_currency("Euro")
 print(euro_countries)
 
 # Example usage: Find all countries that use a currency with "dollar" in its name
-dollar_countries <- get_countries_by_currency("dollar")
+dollar_countries <- get_countries_by_currency("dollar", geometry = TRUE)
 print(dollar_countries)
 
 # Example usage: Find all countries that use the Yen

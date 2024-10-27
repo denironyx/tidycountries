@@ -39,6 +39,7 @@ fetch_restcountries_data <- function(){
 #' }
 #'@importFrom dplyr %>% filter collect all_of distinct select left_join
 #'@importFrom stringr str_to_lower
+#'@importFrom sf st_as_sf
 #'
 get_country_info <- function(country_value, geometry = FALSE){
   # Convert input to lowercase
@@ -69,7 +70,8 @@ get_country_info <- function(country_value, geometry = FALSE){
   # If geometry is TRUE, perform a left join with the world administrative boundaries data
   if (geometry) {
     result <- result %>%
-      left_join(world_administrative_boundaries, by = "cca3")
+      left_join(world_administrative_boundaries, by = "cca3") %>%
+      st_as_sf()  # Convert to an sf data frame if geometry is included
 
   } else {
     result
@@ -115,6 +117,7 @@ get_country_info <- function(country_value, geometry = FALSE){
 #'
 #'@importFrom dplyr %>% filter collect all_of distinct arrange left_join
 #'@importFrom stringr str_to_lower
+#'@importFrom sf st_as_sf
 #'
 get_countries_by_region <- function(country_region_value, geometry = FALSE) {
   country_region_value_lower <- str_to_lower(country_region_value)
@@ -133,7 +136,8 @@ get_countries_by_region <- function(country_region_value, geometry = FALSE) {
   # Check if geometry is requested and join with spatial data
   if (geometry) {
     result <- result %>%
-      left_join(world_administrative_boundaries, by = "cca3")
+      left_join(world_administrative_boundaries, by = "cca3") %>%
+      st_as_sf()  # Convert to an sf data frame if geometry is included
   } else {
     result
   }
@@ -191,6 +195,7 @@ get_countries_by_region <- function(country_region_value, geometry = FALSE) {
 #' }
 #'@importFrom dplyr %>% filter collect all_of distinct select arrange left_join
 #'@importFrom stringr str_to_lower regex str_detect
+#'@importFrom sf st_as_sf
 #'
 get_countries_by_currency <- function(currency_input, geometry = FALSE) {
   # Convert the input currency name to lowercase
@@ -220,7 +225,8 @@ get_countries_by_currency <- function(currency_input, geometry = FALSE) {
   # Check if geometry is requested and join with spatial data
   if (geometry) {
     result <- result %>%
-      left_join(world_administrative_boundaries, by = "cca3")
+      left_join(world_administrative_boundaries, by = "cca3") %>%
+      st_as_sf()  # Convert to an sf data frame if geometry is included
   } else {
     result
   }
@@ -252,8 +258,8 @@ get_countries_by_currency <- function(currency_input, geometry = FALSE) {
 #' us_info <- get_country_by_calling_code("+1")
 #' print(us_info)
 #'
-#' # Example usage: Find country information by calling code suffix
-#' uk_info <- get_country_by_calling_code("44")
+#' # Example usage: Find country information by calling code suffix and include geometry
+#' uk_info <- get_country_by_calling_code("44", geometry = TRUE)
 #' print(uk_info)
 #'
 #' # Example usage: Find country information by full calling code
@@ -262,6 +268,7 @@ get_countries_by_currency <- function(currency_input, geometry = FALSE) {
 #' }
 #'@importFrom dplyr %>% filter collect all_of distinct left_join
 #'@importFrom stringr str_to_lower
+#'@importFrom sf st_as_sf
 #'
 get_country_by_calling_code <- function(call_code, geometry = FALSE) {
   call_code_lower <- str_to_lower(call_code)
@@ -294,7 +301,8 @@ get_country_by_calling_code <- function(call_code, geometry = FALSE) {
   # If geometry is TRUE, perform a left join with the world_administrative_boundaries
   if (geometry) {
     result <- result %>%
-      left_join(world_administrative_boundaries, by = "cca3")
+      left_join(world_administrative_boundaries, by = "cca3") %>%
+      st_as_sf()  # Convert to an sf data frame if geometry is included
   }
 
   # Check if result is empty and provide a warning message

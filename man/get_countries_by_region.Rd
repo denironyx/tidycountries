@@ -4,14 +4,18 @@
 \alias{get_countries_by_region}
 \title{get_countries_by_region}
 \usage{
-get_countries_by_region(country_region_value)
+get_countries_by_region(country_region_value, geometry = FALSE)
 }
 \arguments{
 \item{country_region_value}{A character string representing the region, subregion, or continent. The input is case-insensitive.}
+
+\item{geometry}{Logical. If \code{TRUE}, includes spatial geometry data for each country (boundaries).
+Defaults to \code{FALSE}. When \code{TRUE}, an additional column for geographic boundaries is included.}
 }
 \value{
-A data frame containing the list of countries within the specified region, subregion, or continent, ordered alphabetically by country name.
-If no match is found, a warning message is displayed, and a list of all available regions, subregions, and continents is provided.
+A data frame with information on countries within the specified region, subregion, or continent.
+If \code{geometry = TRUE}, the result includes a geometry column with boundary data.
+If no match is found, a message lists all available regions, subregions, and continents.
 }
 \description{
 This function retrieves a list of countries based on a specified region, subregion, or continent.
@@ -19,8 +23,7 @@ The function is case-insensitive and orders the countries alphabetically by thei
 If the input does not match any region, subregion, or continent, the function provides a list of all available regions, subregions, and continents.
 }
 \note{
-The function utilizes the pre-loaded \code{restcountries_data} dataset. Ensure that this dataset is loaded before invoking the function.
-The selected columns include country codes, names, capital, region, subregion, start of the week, car side, currencies, population, latitude, and longitude.
+This function returns relevant information on countries in a specified region. When \code{geometry = TRUE}, it returns an \code{sf} object, including spatial data.
 }
 \examples{
 \donttest{
@@ -28,8 +31,8 @@ The selected columns include country codes, names, capital, region, subregion, s
 africa_countries <- get_countries_by_region("Africa")
 print(africa_countries)
 
-# Example usage: Get a list of countries in Western Europe (a subregion)
-western_europe_countries <- get_countries_by_region("Western Europe")
+# Example usage: Get countries in a specific continent with geometry included
+western_europe_countries <- get_countries_by_region("Western Europe", geometry = TRUE)
 print(western_europe_countries)
 
 # Example usage: Get a list of countries in the continent of Asia
