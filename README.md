@@ -4,7 +4,7 @@ The `tidycountries` package provides a comprehensive and user-friendly interface
 
 
 ## Why tidycountries: 
-The world is a diverse and complex place, and having reliable and accessible country-level data is crucial for many analyses. Whether you're working on a global research project, developing a visualization, or simply need to query country data for your application, `tidycountries` aims to simplify these tasks. By providing country data in a tidy format compatible with the `tidyverse` ecosystem, `tidycountries` allows users to seamlessly integrate and manipulate country data.
+The world is a diverse and complex place, and having reliable and accessible country-level data is crucial for many analyses. Whether you're working on a global research project, developing a visualization, or simply need to query country data for your application, `tidycountries` aims to simplify these tasks. By providing country data in a tidy format compatible with the `tidyverse` ecosystem, `tidycountries` allows users to seamlessly integrate and manipulate country level data for over 150+ countries.
 
 
 ## Installation
