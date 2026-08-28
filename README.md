@@ -1,6 +1,6 @@
 # tidycountries  R Package
 
-The `tidycountries` package provides a comprehensive and user-friendly interface for accessing, manipulating, and analyzing country-level data from around the world. It allows users to retrieve detailed information on countries, including names, regions, subregions, continents, populations, currencies, calling codes, and more, all in a tidy data format. The package is designed to work seamlessly within the tidyverse ecosystem, making it easy to filter, arrange, and visualize country-level data in R.
+The `tidycountries` package provides a comprehensive and user-friendly interface for accessing, manipulating, and analyzing country-level data from around the world. It allows users to retrieve detailed information on countries, including names, regions, subregions, continents, populations, currencies, calling codes, and more, all in a tidy data format. The package is designed to work seamlessly within the tidyverse ecosystem, making it easy to filter, arrange, and visualize country level data in R.
 
 
 ## Why tidycountries: 
